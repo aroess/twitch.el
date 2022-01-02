@@ -45,7 +45,7 @@ or by setting the following variables in your `init.el`
 
 ## Usage
 - `M-x twitch-get-stream-status` checks which streamers in your list are online. 
-- `M-x twitch-select-stream` select and open streams from the minibuffer.
+- `M-x twitch-select-stream` lets you select and open streams from the minibuffer.
 - `M-x twitch-buffer-create` shows an org-mode buffer with streamers currently online. Click on the links to open streams directly.
 - `M-x twitch-chat` opens the twitch chat in erc
 
@@ -68,7 +68,7 @@ If you are using [hydra](https://github.com/abo-abo/hydra) you can create a neat
 - `twitch-chat` only opens an irc buffer and connects to the twitch irc-gateway but doesn't automatically join any channels.
 
 ## UI improvements
-Emacs by default pops up a new buffer if the script calls `async-shell-command` to open a stream. You can avoid this by putting this in your `init.el`
+Emacs by default pops up a new buffer when the script calls `async-shell-command` to open a stream. You can avoid this by putting this in your `init.el`
 
 ```elisp
 ;; auto-hide async shell buffers
