@@ -28,7 +28,7 @@
 (defcustom
   twitch-extractor
   "youtube-dl"
-  "Program to extract json data. Works youtube-dl and yt-dlp."
+  "Program to extract json data. Works with youtube-dl and yt-dlp."
   :type 'string
   :group 'twitch)
 
