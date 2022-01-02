@@ -155,7 +155,6 @@ streamer."
            :title (format "%s"
 			  (cdr (assoc 'display_id entry)))
            :body (cdr (assoc 'description entry))
-           :app-icon "~/.emacs.d/script/twitch.png" 
            :timeout 30000))))))
 
 ;; create twitch buffer
