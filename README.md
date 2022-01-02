@@ -36,9 +36,9 @@ You can customize twitch.el via `M-x customize-group RET twitch RET` or you can 
 
 ## Usage
 - `M-x twitch-get-stream-status` checks which streamers in your list are online. 
-- `M-x twitch-select-stream` lets you select and open streams from the minibuffer.
-- `M-x twitch-buffer-create` shows an org-mode buffer with online streamers. Click on the links to open streams directly.
-- `M-x twitch-chat` to open the twitch chat in erc
+- `M-x twitch-select-stream` select and open streams from the minibuffer.
+- `M-x twitch-buffer-create` shows an org-mode buffer with streamers currently online. Click on the links to open streams directly.
+- `M-x twitch-chat` opens the twitch chat in erc
 
 If you are using [hydra](https://github.com/abo-abo/hydra) you can create a neat menu like so:
 
@@ -54,7 +54,7 @@ If you are using [hydra](https://github.com/abo-abo/hydra) you can create a neat
 ```
 
 ## Limitations
-- `twitch-get-stream-status` cannot query the view count of streams. It worked some time ago but now it doesn't work and [nobody cares](https://github.com/yt-dlp/yt-dlp/issues/1880).
+- `twitch-get-stream-status` cannot query the viewer count of streams. It worked some time ago but now it doesn't work and [nobody cares](https://github.com/yt-dlp/yt-dlp/issues/1880).
 - `twitch-get-stream-status` cannot query the game category of streams. It worked before twitch changed their API and... you get the point.
 - `twitch-chat` only opens an irc buffer and connects to the twitch irc-gateway but doesn't automatically join any channels.
 
