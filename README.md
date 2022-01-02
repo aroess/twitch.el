@@ -30,9 +30,18 @@ Save `twitch.el` somewhere in your `.emacs.d` folder and put this in your init.e
 (load-file "~/.emacs.d/path_to/twitch.el")`
 ```
 ## Customization
-You can customize twitch.el via `M-x customize-group RET twitch RET` or you can change the values directly in the source code.
+You can customize twitch.el via `M-x customize-group RET twitch RET`
 
 ![image](https://github.com/aroess/twitch.el/blob/main/twitch-customize-group.png?raw=true)
+
+or by setting the folliwing variables in your `init.el`
+
+```elisp
+(setq twitch-streamer-list '("streamer_id_a" "streamer_id_b" "streamer_id_c"))
+(setq twitch-extractor "yt-dlp")
+(setq twitch-video-player "vlc")
+(setq twitch-oauth-token "oauth:YOUR_TOKEN")
+```
 
 ## Usage
 - `M-x twitch-get-stream-status` checks which streamers in your list are online. 
