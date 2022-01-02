@@ -34,7 +34,7 @@ You can customize twitch.el via `M-x customize-group RET twitch RET`
 
 ![image](https://github.com/aroess/twitch.el/blob/main/twitch-customize-group.png?raw=true)
 
-or by setting the folliwing variables in your `init.el`
+or by setting the following variables in your `init.el`
 
 ```elisp
 (setq twitch-streamer-list '("streamer_id_a" "streamer_id_b" "streamer_id_c"))
