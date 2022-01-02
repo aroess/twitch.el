@@ -19,7 +19,7 @@
 
 (defcustom
   twitch-streamer-list
-  nil ; this has to be a list e.g '("streamer_a" "streamer_b")
+  nil
   "List of your favorite streamers."
   :type '(repeat (choice string
                          (cons string (repeat symbol))))
