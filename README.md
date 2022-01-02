@@ -9,7 +9,7 @@ This is a simple elisp script for [Emacs](https://www.gnu.org/software/emacs/) w
 - select streams from an org-mode buffer with clickable links
 - open twitch chat via erc (builtin emacs irc client)
 
-![image](https://github.com/aroess/twitch.el/blob/main/twitch-org-buffer.png)
+![image](https://github.com/aroess/twitch.el/blob/main/twitch-org-buffer.png?raw=true)
 
 ## How does it work?
 This script uses [youtube-dl](https://github.com/ytdl-org/youtube-dl) (or [yt-dlp](https://github.com/yt-dlp/yt-dlp)) to query the Twitch API. I used this
@@ -17,14 +17,14 @@ approach because Twitch changes their API every 17 seconds and makes
 it more akward to use every time. So now when it changes again it's
 the problem of the youtube-dl maintainers and not mine. 
 
-Pros:
+**Pros**:
 - it uses youtube-dl so when Twitch changes their API and breaks everything it's not on me to fix it.
 
-Cons:
+**Cons**:
 - it uses youtube-dl so it's very, very slow and gets even slower when the list of streamers grows.
 
 ## Installation
-Save twitch.el somewhere in your `.emacs.d` folder and put this in your init.el:
+Save `twitch.el` somewhere in your `.emacs.d` folder and put this in your init.el:
 
 ```elisp
 (load-file "~/.emacs.d/path_to/twitch.el")`
@@ -32,7 +32,7 @@ Save twitch.el somewhere in your `.emacs.d` folder and put this in your init.el:
 ## Customization
 You can customize twitch.el via `M-x customize-group RET twitch RET` or you can change the values directly in the source code.
 
-![image](https://github.com/aroess/twitch.el/blob/main/twitch-customize-group.png)
+![image](https://github.com/aroess/twitch.el/blob/main/twitch-customize-group.png?raw=true)
 
 ## Usage
 - `M-x twitch-get-stream-status` checks which streamers in your list are online. 
@@ -40,7 +40,7 @@ You can customize twitch.el via `M-x customize-group RET twitch RET` or you can 
 - `M-x twitch-buffer-create` shows an org-mode buffer with online streamers. Click on the links to open streams directly.
 - `M-x twitch-chat` to open the twitch chat in erc
 
-If you are using [hydra](https://github.com/abo-abo/hydra) you can create a neat menu like so.
+If you are using [hydra](https://github.com/abo-abo/hydra) you can create a neat menu like so:
 
 ```elisp
 (defhydra hydra-twitch (:columns 1)
