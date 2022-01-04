@@ -79,4 +79,7 @@ Emacs by default pops up a new buffer when the script calls `async-shell-command
 
 If you click a link in an org-mode buffer which calls some elisp code you get a warning (which is good). If you want to disable this warning put this in your `init.el`
 
-`(setq org-confirm-elisp-link-function nil)`
+
+```elisp
+(setq org-confirm-elisp-link-function nil)
+```
