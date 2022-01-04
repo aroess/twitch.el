@@ -49,7 +49,6 @@
 (setq twitch-streamer-online nil)
 (setq twitch-online-before nil)
 
-;; helper functions
 (defun twitch-get-values (key lst)
   "Returns a list of the values from all entries for the given
   key."
@@ -90,43 +89,45 @@ streamer."
 			   (cdr (assoc 'display_id a))
 			   (cdr (assoc 'display_id b))))))
 
-;; call youtube-dl -j for each streamer in list
 (defun twitch-get-stream-status ()
-  "Check which streamers in twitch-streamer-list are online at
+  "Checks which streamers in twitch-streamer-list are online at
    the moment."
   (interactive)
-  (set-process-sentinel
-   ; call youtube-dl
-   (make-process
-    :name "twitch-get-stream-info"
-    :buffer "*twitch-stream-info*"
-    :stderr (get-buffer-create "*twitch-stream-info-error*")
-    :command (apply 'list twitch-extractor "-j" "-i"
-		    (mapcar (lambda (x)
-			      (concat "https://twitch.tv/" x))
-			    twitch-streamer-list)))
-   ; sentinel 
-   (lambda (proc msg)
-     ; setup lists
-     (setq twitch-online-before
-           (copy-alist twitch-streamer-online))
-     (setq twitch-streamer-online nil)
-     ; read and parse json-string line by line
-     (with-current-buffer "*twitch-stream-info*"
-       (goto-char (point-min))
-       (while (not (eobp))
-	 (progn
-	   (twitch-parse-json-line)
-	   (next-line)
-	   (move-beginning-of-line 1))))
-     ; sort, kill temp buffers, notify
-     (setq twitch-streamer-online
-	   (twitch-sort-viewers twitch-streamer-online))
-     (kill-buffer "*twitch-stream-info*")
-     (kill-buffer "*twitch-stream-info-error*")
-     (message "Refresh finished: [%s] streamers online"
-	      (length twitch-streamer-online))
-     (twitch-notify))))
+  ;; process guard
+  (if (get-process "twitch-get-stream-info")
+      (message "Process already running. Please wait.")
+    (set-process-sentinel
+     ;; call twitch-extractor for each streamer in list
+     (make-process
+      :name "twitch-get-stream-info"
+      :buffer "*twitch-stream-info*"
+      :stderr (get-buffer-create "*twitch-stream-info-error*")
+      :command (apply 'list twitch-extractor "-j" "-i"
+		      (mapcar (lambda (x)
+				(concat "https://twitch.tv/" x))
+			      twitch-streamer-list)))
+     ;; sentinel 
+     (lambda (proc msg)
+       ;; setup lists
+       (setq twitch-online-before
+             (copy-alist twitch-streamer-online))
+       (setq twitch-streamer-online nil)
+       ;; read and parse json-string line by line
+       (with-current-buffer "*twitch-stream-info*"
+	 (goto-char (point-min))
+	 (while (not (eobp))
+	   (progn
+	     (twitch-parse-json-line)
+	     (next-line)
+	     (move-beginning-of-line 1))))
+       ;; sort, kill temp buffers, notify
+       (setq twitch-streamer-online
+	     (twitch-sort-viewers twitch-streamer-online))
+       (kill-buffer "*twitch-stream-info*")
+       (kill-buffer "*twitch-stream-info-error*")
+       (message "Refresh finished: [%s] streamers online"
+		(length twitch-streamer-online))
+       (twitch-notify)))))
 
 (require 'json)
 (defun twitch-parse-json-line ()
@@ -142,7 +143,6 @@ streamer."
        (assoc 'formats res))
       twitch-streamer-online))))
 
-;; notify
 (require 'notifications)
 (defun twitch-notify ()
   "Send a desktop notification for every new streamer since last
@@ -190,7 +190,6 @@ streamer."
 	       (format "[[elisp:(twitch-open-stream \"%s\" \"%s\")][%s]] " streamer f f))
 	     formats " "))
 
-;; select stream and play 
 (defun twitch-select-stream ()
   "Interactive function to select a currently available stream."
   (interactive)
@@ -208,14 +207,14 @@ streamer."
       streamer-name quality)))
 
 (defun twitch-open-stream (streamer quality)
+  "Opens streams with twitch-video-player."
   (async-shell-command 
    (format "%s %s "
 	   twitch-video-player
            (twitch-get-url streamer quality))))
 
-;; twitch chat
 (defun twitch-chat ()
-  "Connect to twitch chat"
+  "Connect to twitch chat."
   (interactive)
   (erc :server "irc.chat.twitch.tv"
        :port "6667"
