@@ -1,3 +1,5 @@
+;;; twitch.el --- A simple twitch client for emacs
+
 ;; This file is not part of GNU Emacs.
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -12,6 +14,12 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; A simple twitch client which lets you check, select and open twitch streams
+
+;;; Code:
 
 (defgroup twitch nil
   "Emacs twitch client."
@@ -46,37 +54,35 @@
   :type 'string
   :group 'twitch)
 
-(setq twitch-streamer-online nil)
-(setq twitch-online-before nil)
+(defvar twitch-streamer-online nil)
+(defvar twitch-online-before nil)
 
 (defun twitch-get-values (key lst)
-  "Returns a list of the values from all entries for the given
-  key."
+  "Return a LST of the values from all entries for the given KEY."
   (mapcar (lambda (x) (cdr (assoc key x))) lst))
 
 (defun twitch-get-index (val lst)
-  "Returns the index of the entry for a given value."
+  "Return a list (LST) of the indices of all the entries for a given value (VAL)."
   (seq-position
    (mapcar (lambda (x) (cdr (rassoc val x))) lst)
    val))
 
 (defun twitch-uptime (start)
-  "Calculate time delta between two timestamps: start and now"
+  "Calculate time delta between two timestamps: START and now."
   (let* ((now (time-convert nil 'integer))
          (h (/ (- now start) 3600))
          (m (% (/ (- now start) 60) 60)))
     (format "Uptime %dh%02dm" h m)))
 
 (defun twitch-get-quality (streamer)
-  "Returns all quality identifiers (e.g. audio_only, 720p, etc) for
-streamer."
+  "Return all quality identifiers (e.g. 480p, 720p, etc) for STREAMER."
   (let ((format-list-full
 	 (elt twitch-streamer-online
 	      (twitch-get-index streamer twitch-streamer-online))))
     (twitch-get-values 'format_id (cdr (assoc 'formats format-list-full)))))
 
 (defun twitch-get-url (streamer quality)
-  "Returns stream url."
+  "Return stream url for given STREAMER and QUALITY."
   (let ((entry (cdr (assoc
 	    'formats
 	    (elt twitch-streamer-online
@@ -84,14 +90,13 @@ streamer."
       (cdr (assoc 'url (elt entry (twitch-get-index quality entry))))))
 
 (defun twitch-sort-viewers (lst)
-  "Returns sorted list by display name. Destroys original!"
+  "Return sorted LST by display name. Alters original!"
   (sort lst (lambda (a b) (string<
 			   (cdr (assoc 'display_id a))
 			   (cdr (assoc 'display_id b))))))
 
 (defun twitch-get-stream-status ()
-  "Checks which streamers in twitch-streamer-list are online at
-   the moment."
+  "Check which streamers in are online at the moment."
   (interactive)
   ;; process guard
   (if (get-process "twitch-get-stream-info")
@@ -106,7 +111,7 @@ streamer."
 		      (mapcar (lambda (x)
 				(concat "https://twitch.tv/" x))
 			      twitch-streamer-list)))
-     ;; sentinel 
+     ;; sentinel
      (lambda (proc msg)
        ;; setup lists
        (setq twitch-online-before
@@ -118,7 +123,7 @@ streamer."
 	 (while (not (eobp))
 	   (progn
 	     (twitch-parse-json-line)
-	     (next-line)
+	     (forward-line)
 	     (move-beginning-of-line 1))))
        ;; sort, kill temp buffers, notify
        (setq twitch-streamer-online
@@ -136,7 +141,7 @@ streamer."
     (setq
      twitch-streamer-online
      (cons
-      (list 
+      (list
        (assoc 'display_id res)
        (assoc 'description res)
        (assoc 'timestamp res)
@@ -145,8 +150,7 @@ streamer."
 
 (require 'notifications)
 (defun twitch-notify ()
-  "Send a desktop notification for every new streamer since last
-  update."
+  "Send a desktop notification for every new streamer since last update."
   (let ((now twitch-streamer-online) (before twitch-online-before))
     (dolist (x (twitch-get-values 'display_id now))
       (when (not (member x (twitch-get-values 'display_id before)))
@@ -160,7 +164,7 @@ streamer."
 ;; create twitch buffer
 (defvar twitch-buffer-name "*twitch*")
 (defun twitch-buffer-create ()
-  "Create an org-mode buffer with clickable links."
+  "Create an 'org-mode' buffer with clickable links."
   (interactive)
   (when (get-buffer twitch-buffer-name)
       (kill-buffer twitch-buffer-name))
@@ -177,15 +181,16 @@ streamer."
                     (cdr (assoc 'description x))
                     (twitch-uptime (cdr (assoc 'timestamp x)))
 		    (twitch-generate-elisp-links
-		     (cdr (assoc 'display_id x)) 
+		     (cdr (assoc 'display_id x))
 		     (twitch-get-values
 		      'format_id
 		      (cdr (assoc 'formats x)))))
                    (current-buffer)))
           twitch-streamer-online)
-    (beginning-of-buffer)))
+    (goto-char (point-min))))
 
 (defun twitch-generate-elisp-links (streamer formats)
+  "Return 'org-mode'-links for STREAMER and FORMATS."
   (mapconcat (lambda (f)
 	       (format "[[elisp:(twitch-open-stream \"%s\" \"%s\")][%s]] " streamer f f))
 	     formats " "))
@@ -207,11 +212,19 @@ streamer."
       streamer-name quality)))
 
 (defun twitch-open-stream (streamer quality)
-  "Opens streams with twitch-video-player."
-  (async-shell-command 
-   (format "%s %s "
-	   twitch-video-player
-           (twitch-get-url streamer quality))))
+  "Open stream with twitch-video-player for STREAMER in QUALITY."
+  (let ((title
+	 (cond
+	  ((string= twitch-video-player "mpv")
+	   (format "--force-media-title='%s (%s)'" streamer quality))
+	  ((string= twitch-video-player "vlc")
+	   (format "--meta-title '%s (%s)'" streamer quality))
+	  (t ""))))
+    (async-shell-command
+     (format "%s %s %s "
+	     twitch-video-player
+	     title
+             (twitch-get-url streamer quality)))))
 
 (defun twitch-chat ()
   "Connect to twitch chat."
@@ -220,3 +233,5 @@ streamer."
        :port "6667"
        :password twitch-oauth-token))
 
+(provide 'twitch)
+;;; twitch.el ends here
