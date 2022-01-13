@@ -96,7 +96,7 @@
 			   (cdr (assoc 'display_id b))))))
 
 (defun twitch-get-stream-status ()
-  "Check which streamers in are online at the moment."
+  "Check which streamers are online at the moment."
   (interactive)
   ;; process guard
   (if (get-process "twitch-get-stream-info")
