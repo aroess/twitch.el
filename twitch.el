@@ -56,6 +56,7 @@
 
 (defvar twitch-streamer-online nil)
 (defvar twitch-online-before nil)
+(defvar twitch-last-update nil)
 
 (defun twitch-get-values (key lst)
   "Return a LST of the values from all entries for the given KEY."
@@ -125,6 +126,7 @@
 	     (twitch-parse-json-line)
 	     (forward-line)
 	     (move-beginning-of-line 1))))
+       (setq twitch-last-update (current-time-string))
        ;; sort, kill temp buffers, notify
        (setq twitch-streamer-online
 	     (twitch-sort-viewers twitch-streamer-online))
@@ -172,7 +174,9 @@
   (with-current-buffer twitch-buffer-name
     (org-mode)
     (princ
-     "* Twitch Streamer Online Status\n"
+     (format
+      "* Twitch Streamer Online Status\n/last update %s/\n\n"
+      twitch-last-update)
      (current-buffer))
     (mapc (lambda (x)
             (princ (format
