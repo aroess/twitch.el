@@ -35,8 +35,6 @@ Or add it to your [load path](https://www.emacswiki.org/emacs/LoadPath).
 ## Customization
 You can customize twitch.el via `M-x customize-group RET twitch RET`
 
-![image](https://github.com/aroess/twitch.el/blob/main/twitch-customize-group.png?raw=true)
-
 or by setting the following variables in your `init.el`
 
 ```elisp
