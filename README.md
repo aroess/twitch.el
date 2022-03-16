@@ -29,6 +29,9 @@ Save `twitch.el` somewhere in your `.emacs.d` folder and put this in your init.e
 ```elisp
 (load-file "~/.emacs.d/path_to/twitch.el")`
 ```
+
+Or add it to your [load path](https://www.emacswiki.org/emacs/LoadPath).
+
 ## Customization
 You can customize twitch.el via `M-x customize-group RET twitch RET`
 
