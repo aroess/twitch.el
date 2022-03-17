@@ -27,7 +27,7 @@ the problem of the youtube-dl maintainers and not mine.
 Save `twitch.el` somewhere in your `.emacs.d` folder and put this in your init.el:
 
 ```elisp
-(load-file "~/.emacs.d/path_to/twitch.el")`
+(load-file "~/.emacs.d/path_to/twitch.el")
 ```
 
 Or add it to your [load path](https://www.emacswiki.org/emacs/LoadPath).
